@@ -1,0 +1,50 @@
+-- Definir tamanho da hitbox e transparência
+local hitboxSize = Vector3.new(10, 10, 10)  -- Tamanho da hitbox
+local hitboxTransparency = 0.5  -- Transparência da hitbox
+local espEnabled = true  -- ESP ativado
+
+-- Função para expandir a hitbox de um NPC
+local function expandHitbox(npc)
+    if npc and npc:FindFirstChild("HumanoidRootPart") then
+        local humanoidPart = npc:FindFirstChild("HumanoidRootPart")
+        humanoidPart.Size = hitboxSize
+        humanoidPart.Transparency = hitboxTransparency
+        humanoidPart.CanCollide = false -- Para não interferir na colisão
+    end
+end
+
+-- Função para aplicar ESP no NPC
+local function applyESP(npc)
+    if npc and npc:FindFirstChild("HumanoidRootPart") then
+        local humanoidPart = npc:FindFirstChild("HumanoidRootPart")
+        
+        -- Checar se já existe um Highlight (ESP) aplicado
+        if not humanoidPart:FindFirstChild("Highlight") then
+            local highlight = Instance.new("Highlight")
+            highlight.Parent = humanoidPart
+            highlight.FillColor = Color3.fromRGB(255, 0, 0)  -- Cor vermelha para ESP
+            highlight.OutlineColor = Color3.fromRGB(0, 0, 0) -- Borda preta
+            highlight.FillTransparency = 0.5
+            highlight.OutlineTransparency = 0
+        end
+    end
+end
+
+-- Função para expandir hitboxes e aplicar ESP em todos os NPCs
+local function expandHitboxesAndApplyESP()
+    -- Iterar por todos os modelos (NPCs) no workspace
+    for _, npc in pairs(workspace:GetChildren()) do
+        if npc:IsA("Model") and npc:FindFirstChild("HumanoidRootPart") then
+            expandHitbox(npc)
+            if espEnabled then
+                applyESP(npc)
+            end
+        end
+    end
+end
+
+-- Loop para expandir hitbox e aplicar ESP continuamente
+while true do
+    expandHitboxesAndApplyESP()
+    wait(1)  -- Espera 1 segundo antes de verificar novamente
+end
